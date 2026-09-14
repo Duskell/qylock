@@ -18,7 +18,11 @@
   <img src="https://img.shields.io/badge/-HELLO%20THERE!!-e0af68?style=for-the-badge&labelColor=1a1b26&logo=coffeescript&logoColor=white" height="60" />
 </p>
 
-<p>Welcome to <b>Qylock</b>! Pretty much a bunch of lockscreen themes I've put together for SDDM and Quickshell. Enjoyyyyyyy!!!! </p>
+<p>Welcome to this <b>Qylock</b> fork! The main goal of this is repo is to allow quickshell to have a secure lockscreen on x11 (mainly i3) and to make the lockscreens here use that.</p>
+
+<p>And how does it aim to achieve that? Well I'm glad you asked! It is with a modified version of i3lock, utilizing its locking mechanisms, to start qs and apply all its powers to that window, instead of its own.</p>
+
+<p>That's about it. The rest is just the default README.</p>
 
 <p><i>Hope ya find something that fits your setup~</i></p>
 <br>
