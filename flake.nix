@@ -66,6 +66,36 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
 
+      i3lock-backend = pkgs.stdenv.mkDerivation {
+        pname = "i3lock-backend";
+        version = "unstable";
+
+        src = pkgs.fetchFromGitHub {
+          owner = "Duskell";
+          repo = "i3lock-backend";
+          rev = "95fd05ce424858d5f803e810fb769f4216bcd8e2";
+          hash = "sha256-UWVXs1uXjox8aPnzCzS33Lf6gdqz8A2lQRrz53tZ1Fo=";
+        };
+
+        nativeBuildInputs = with pkgs; [
+          meson
+          ninja
+          pkg-config
+        ];
+
+        buildInputs = with pkgs; [
+          cairo
+          libev
+          libxkbcommon
+          pam
+          xcbutilxrm
+          libx11
+          libxcb
+          libxcb-util
+          libxcb-image
+        ];
+      };
+
       mkSddmThemes = {themeOptions ? {}}:
         pkgs.stdenvNoCC.mkDerivation {
           pname = "qylock-sddm-themes";
@@ -100,6 +130,8 @@
                           mkdir -p $out/share/qylock
                           cp -r quickshell-lockscreen/. $out/share/qylock/
                           cp -r themes $out/share/qylock/themes
+
+                          ln -sf ${i3lock-backend}/bin/i3lock $out/share/qylock/i3lock
 
                           mkdir -p $out/bin
                           qmlPath="${pkgs.qt6.qt5compat}/lib/qt-6/qml:${pkgs.qt6.qtdeclarative}/lib/qt-6/qml:${pkgs.qt6.qtmultimedia}/lib/qt-6/qml:${pkgs.qt6.qtsvg}/lib/qt-6/qml"
