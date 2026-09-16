@@ -106,6 +106,7 @@
                           makeWrapper $out/share/qylock/lock.sh $out/bin/qylock-lock \
                             --set-default QS_THEME "${defaultTheme}" \
                             --set QYLOCK_THEMES_ROOT "$out/share/qylock/themes" \
+                            --set QYLOCK_ROOT "$out/share/qylock" \
                             --suffix QML2_IMPORT_PATH : "$qmlPath" \
                             --suffix QML_IMPORT_PATH : "$qmlPath" \
                             --prefix PATH : ${pkgs.lib.makeBinPath [
@@ -137,7 +138,10 @@
             else
                 export QS_THEME_PATH="$DIR/themes_link/$QS_THEME"
             fi' \
-                              'export QS_THEME_PATH="$QYLOCK_THEMES_ROOT/$QS_THEME"'
+                              'export QS_THEME_PATH="$QYLOCK_THEMES_ROOT/$QS_THEME"' \
+                            --replace-fail \
+                              './i3lock' \
+                              '$QYLOCK_ROOT/i3lock' \
 
                           runHook postInstall
           '';
