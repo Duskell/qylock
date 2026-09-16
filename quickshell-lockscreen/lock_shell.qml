@@ -2,8 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import QtMultimedia
+import SessionLock
 import "./shim"
-
 
 ShellRoot {
     id: shellRoot
@@ -25,10 +25,14 @@ ShellRoot {
         themePath: shellRoot.themePath
     }
 
+    SessionLock {
+        id: slock
+    }
+
     Connections {
         target: sddmShim.sddm
         function onLoginSucceeded() {
-            shellRoot.authenticated = true
+            shellRoot.authenticated = true;
 
             // Hyprland session lock fix
             if (Quickshell.env("XDG_CURRENT_DESKTOP") === "Hyprland" || Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE") !== "") {
@@ -42,7 +46,7 @@ ShellRoot {
                 delay = 500;
             }
             quitTimer.interval = delay;
-            quitTimer.start()
+            quitTimer.start();
         }
     }
 
@@ -50,8 +54,11 @@ ShellRoot {
         id: quitTimer
         interval: 3000
         onTriggered: {
-            shellRoot.sessionLocked = false
-            Qt.quit()
+            shellRoot.sessionLocked = false;
+            slock.startConnection();
+            slock.sendMessage("AUTHENTICATION_SUCCESSFUL");
+            slock.closeConnection();
+            Qt.quit();
         }
     }
 
@@ -60,13 +67,13 @@ ShellRoot {
         Loader {
             anchors.fill: parent
             source: "file://" + shellRoot.themePath + "/Main.qml"
-            
+
             onLoaded: {
-                item.forceActiveFocus()
+                item.forceActiveFocus();
             }
             onStatusChanged: {
                 if (status === Loader.Error) {
-                    console.error("FAILED to load theme:", source)
+                    console.error("FAILED to load theme:", source);
                 }
             }
         }
@@ -82,16 +89,22 @@ ShellRoot {
                 surface: Component {
                     WlSessionLockSurface {
                         color: "black"
-                        
+
                         // Absorb unhandled gestures
-                        PinchHandler { target: null }
-                        WheelHandler { target: null }
-                        
+                        PinchHandler {
+                            target: null
+                        }
+                        WheelHandler {
+                            target: null
+                        }
+
                         MouseArea {
                             anchors.fill: parent
                             acceptedButtons: Qt.AllButtons
                             hoverEnabled: true
-                            onWheel: (wheel) => { wheel.accepted = true }
+                            onWheel: wheel => {
+                                wheel.accepted = true;
+                            }
                         }
 
                         Loader {
@@ -118,11 +131,26 @@ ShellRoot {
                     height: isTesting ? 720 : screen.height
                     visible: shellRoot.sessionLocked
                     visibility: isTesting ? Window.Windowed : Window.FullScreen
-                    
-                    onClosing: (close) => {
+
+                    onVisibleChanged: {
+                        if (visible) {
+                            const xid = slock.id(window);
+                            if (xid === 0) {
+                                console.error("Window handle is not ready yet!");
+                                return;
+                            }
+
+                            console.log("OPEN:", slock.startConnection());
+                            console.log("SEND:", slock.sendMessage("WINDOW_ID:" + xid));
+                            console.log("GRAB:", slock.grabInputs());
+                            console.log("CLOSE:", slock.closeConnection());
+                        }
+                    }
+
+                    onClosing: close => {
                         close.accepted = shellRoot.authenticated || shellRoot.isTesting;
                     }
-                    
+
                     flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.MaximizeUsingFullscreenGeometryHint
                     color: "black"
 

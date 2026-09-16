@@ -1,0 +1,7 @@
+module SessionLock
+linktarget sessionlock
+optional plugin sessionlock
+classname SessionLockPlugin
+typeinfo sessionlockplugin.qmltypes
+prefer :/qt/qml/SessionLock/
+

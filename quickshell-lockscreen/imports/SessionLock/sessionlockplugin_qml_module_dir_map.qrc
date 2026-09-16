@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/qt/qml/SessionLock">/home/levente/Projects/Random/session-lock-qml/build/SessionLock</file>
+
+  </qresource>
+</RCC>

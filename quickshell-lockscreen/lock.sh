@@ -35,4 +35,4 @@ echo "Theme path: $QS_THEME_PATH"
 killall -9 hyprlock swaylock wlogout 2>/dev/null || true
 
 # Execute lock
-exec quickshell -p "$DIR/lock_shell.qml"
+exec ../i3lock -C "$DIR/lock_shell.qml"
