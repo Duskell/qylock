@@ -32,7 +32,16 @@ echo "Locking with Quickshell using theme: $QS_THEME"
 echo "Theme path: $QS_THEME_PATH"
 
 # Process cleanup
-killall -9 hyprlock swaylock wlogout 2>/dev/null || true
+killall -9 hyprlock swaylock wlogout i3lock 2>/dev/null || true
 
 # Execute lock
-exec ../i3lock -C "$DIR/lock_shell.qml"
+if [[ "${XDG_SESSION_TYPE:-}" == "x11" ]]; then
+    echo "X11 detected"
+    exec ../i3lock -C "$DIR/lock_shell.qml"
+elif [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
+    echo "Wayland detected"
+    exec quickshell -p "$DIR/lock_shell.qml"
+else
+    echo "Could not determine display server" >&2
+    exit 1
+fi
