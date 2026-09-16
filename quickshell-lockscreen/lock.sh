@@ -37,7 +37,7 @@ killall -9 hyprlock swaylock wlogout i3lock 2>/dev/null || true
 # Execute lock
 if [[ "${XDG_SESSION_TYPE:-}" == "x11" ]]; then
     echo "X11 detected"
-    exec ../i3lock -C "$DIR/lock_shell.qml"
+    exec ./i3lock -C "$DIR/lock_shell.qml"
 elif [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
     echo "Wayland detected"
     exec quickshell -p "$DIR/lock_shell.qml"
