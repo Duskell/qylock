@@ -90,7 +90,8 @@
           pname = "qylock-quickshell";
           version = "unstable";
           src = ./.;
-          nativeBuildInputs = [pkgs.makeWrapper];
+          nativeBuildInputs = [pkgs.makeWrapper pkgs.autoPatchelfHook];
+          buildInputs = [pkgs.libev];
           dontBuild = true;
           installPhase = ''
                           runHook preInstall
